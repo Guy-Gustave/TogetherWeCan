@@ -12,7 +12,10 @@ class RegistrationsController < ApplicationController
       }, status: :created
 
     else
-      render json: {status: 422}
+      render json: {
+        status: 422,
+        errors: user.errors
+      }
     end
   end
 
