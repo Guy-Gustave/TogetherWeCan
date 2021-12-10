@@ -13,7 +13,10 @@ class SessionsController < ApplicationController
         user: user
       }, status: :created
     else
-      render json: status: 403
+      render json: {
+        status: 403,
+        error: "Email or Password is incorrect!"
+      }
     end
 
   end
