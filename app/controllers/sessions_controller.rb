@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
       render json: {
         status: 403,
         error: "Email or Password is incorrect!"
-      }
+      }, status: 403
     end
 
   end
