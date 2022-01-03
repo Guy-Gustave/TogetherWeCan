@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_03_142312) do
+ActiveRecord::Schema.define(version: 2022_01_03_170759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,7 +58,10 @@ ActiveRecord::Schema.define(version: 2022_01_03_142312) do
     t.integer "week_number"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "transaction_number"
+    t.bigint "gift_id", null: false
     t.index ["capital_id"], name: "index_transactions_on_capital_id"
+    t.index ["gift_id"], name: "index_transactions_on_gift_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -80,4 +83,5 @@ ActiveRecord::Schema.define(version: 2022_01_03_142312) do
   add_foreign_key "gifts", "capitals"
   add_foreign_key "gifts", "users"
   add_foreign_key "transactions", "capitals"
+  add_foreign_key "transactions", "gifts"
 end
