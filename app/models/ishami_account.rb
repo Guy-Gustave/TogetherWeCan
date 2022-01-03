@@ -1,0 +1,2 @@
+class IshamiAccount < ApplicationRecord
+end
