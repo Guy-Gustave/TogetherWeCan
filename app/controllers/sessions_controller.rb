@@ -1,9 +1,8 @@
 class SessionsController < ApplicationController
-
   include CurrentUserConcern
 
   def create
-    user = User.find_by(email: session_params["email"]).try(:authenticate, session_params["password"])
+    user = User.find_by(email: session_params['email']).try(:authenticate, session_params['password'])
 
     if user
       session[:user_id] = user.id
@@ -15,10 +14,9 @@ class SessionsController < ApplicationController
     else
       render json: {
         status: 403,
-        error: "Email or Password is incorrect!"
+        error: 'Email or Password is incorrect!'
       }, status: 403
     end
-
   end
 
   def logged_in
@@ -29,12 +27,12 @@ class SessionsController < ApplicationController
       }
     else
       render json: {
-        logged_in: false,
+        logged_in: false
       }
     end
   end
 
-  def logout 
+  def logout
     reset_session
     render json: {
       logged_in: false,
