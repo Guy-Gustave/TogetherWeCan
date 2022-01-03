@@ -1,5 +1,5 @@
 class StaticController < ApplicationController
   def home
-    render json: { hapening: 'Gustave is working remotely with Ntaate' }
+    render json: { thunder: 'This is a project for TONTON done by Gustave and Roy' }
   end
 end
