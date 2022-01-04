@@ -3,10 +3,11 @@ Rails.application.routes.draw do
 
   resources :sessions, only: [:create]
   resources :registrations, only: [:create]
-  resources :capitals, only: [:index]
+  resources :capitals, only: [:index, :create]
+  resources :transactions, only: [:create]
 
   delete :logout, to: "sessions#logout"
   get :logged_in, to: "sessions#logged_in"
 
-  root to: 'static#home'
+  root to: 'transactions#index'
 end
