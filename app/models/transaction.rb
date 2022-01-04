@@ -2,7 +2,7 @@ class Transaction < ApplicationRecord
   belongs_to :capital
   belongs_to :gift, optional: true
 
-  TRANSACTION_TYPES = (:payment, :deposit)
+  TRANSACTION_TYPES = ["payment", "deposit"]
 
   validates :capital, presence: true
   validates :amount, presence: true, numericality: true
@@ -15,5 +15,6 @@ class Transaction < ApplicationRecord
   def load_defaults
     if self.new_record?
       self.transaction_number = SecureRandom.uuid
+    end
   end
 end
