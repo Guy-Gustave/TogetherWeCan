@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_04_090027) do
+ActiveRecord::Schema.define(version: 2022_01_06_224038) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,7 +28,7 @@ ActiveRecord::Schema.define(version: 2022_01_04_090027) do
     t.bigint "user_id", null: false
     t.decimal "amount"
     t.string "capital_name"
-    t.decimal "savings"
+    t.integer "period"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_capitals_on_user_id"
