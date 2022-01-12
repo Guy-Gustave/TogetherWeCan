@@ -1,6 +1,7 @@
 class CapitalsController < ApplicationController
 
   include CurrentUserConcern
+  include CapitalsHelper
 
   before_action :confirm_current_user, only: [:index, :create]
 
@@ -22,6 +23,8 @@ class CapitalsController < ApplicationController
     @capital.save
 
     @capital
+    # CapitalsHelper::CAPITAL_AMOUNT
+    # CAPITAL_AMOUNT
   end
   
   private
