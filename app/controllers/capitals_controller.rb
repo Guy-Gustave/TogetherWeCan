@@ -18,7 +18,7 @@ class CapitalsController < ApplicationController
 
     new_capital_name = Capital.set_new_capital_name(current_user)
     
-    @capital = Capital.new(user_id: current_user.id, amount: CAPITAL_AMOUNT, capital_name: new_capital_name, savings: 0);
+    @capital = Capital.new(user_id: current_user.id, amount: CAPITAL_AMOUNT, capital_name: new_capital_name);
 
     @capital.save
 
@@ -26,6 +26,7 @@ class CapitalsController < ApplicationController
     # CapitalsHelper::CAPITAL_AMOUNT
     # CAPITAL_AMOUNT
   end
+
   
   private
 
