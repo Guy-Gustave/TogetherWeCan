@@ -7,6 +7,15 @@ class Capital < ApplicationRecord
   validates :user, presence: true
   validates :capital_name, presence: true
 
+  before_validation :load_defaults
+
+  def load_defaults
+    if self.new_record?
+      self.period = 0
+    end
+  end
+
+
   def self.set_new_capital_name(current_user)
     last_capital = Capital.where(user_id: current_user.id).last
     new_capital_name = ""
