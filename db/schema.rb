@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_06_224038) do
+ActiveRecord::Schema.define(version: 2022_01_24_211632) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,6 +31,8 @@ ActiveRecord::Schema.define(version: 2022_01_06_224038) do
     t.integer "period"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "purchase_id", null: false
+    t.index ["purchase_id"], name: "index_capitals_on_purchase_id"
     t.index ["user_id"], name: "index_capitals_on_user_id"
   end
 
@@ -40,7 +42,9 @@ ActiveRecord::Schema.define(version: 2022_01_06_224038) do
     t.decimal "amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "purchase_id", null: false
     t.index ["capital_id"], name: "index_gifts_on_capital_id"
+    t.index ["purchase_id"], name: "index_gifts_on_purchase_id"
     t.index ["user_id"], name: "index_gifts_on_user_id"
   end
 
@@ -49,6 +53,14 @@ ActiveRecord::Schema.define(version: 2022_01_06_224038) do
     t.decimal "total_amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "purchases", force: :cascade do |t|
+    t.string "purchase_number"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_purchases_on_user_id"
   end
 
   create_table "transactions", force: :cascade do |t|
@@ -79,9 +91,12 @@ ActiveRecord::Schema.define(version: 2022_01_06_224038) do
   end
 
   add_foreign_key "admin_accounts", "gifts"
+  add_foreign_key "capitals", "purchases"
   add_foreign_key "capitals", "users"
   add_foreign_key "gifts", "capitals"
+  add_foreign_key "gifts", "purchases"
   add_foreign_key "gifts", "users"
+  add_foreign_key "purchases", "users"
   add_foreign_key "transactions", "capitals"
   add_foreign_key "transactions", "gifts"
 end
