@@ -1,5 +1,13 @@
 class PurchasesController < ApplicationController
 
+
+  def index 
+    @purchases = Purchase.all
+    render json: {
+      purchases: @purchases
+    }
+  end
+  
   def create(current_user)
     last_purchase = Purchase.where(user_id: current_user.id).last
     purchase_no = 1
@@ -11,5 +19,7 @@ class PurchasesController < ApplicationController
 
     new_purchase = Purchase.new(user_id: current_user.id, purchase_number: "purchase-#{purchase_no}")
     new_purchase.save
+
+    new_purchase
   end
 end
