@@ -3,5 +3,5 @@ class Purchase < ApplicationRecord
   has_many :capitals, dependent: :destroy
   has_many :gifts, dependent: :destroy
 
-  validates :purchse_number, presence: true
+  validates :purchase_number, presence: true
 end
