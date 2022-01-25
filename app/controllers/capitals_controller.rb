@@ -14,11 +14,11 @@ class CapitalsController < ApplicationController
   end
   
 
-  def create(current_user)
-
-    new_capital_name = Capital.set_new_capital_name(current_user)
+  def create(purchase)
+    # current_user = User.where(id: purchase.user_id)
+    new_capital_name = Capital.set_new_capital_name(purchase)
     
-    @capital = Capital.new(user_id: current_user.id, amount: CAPITAL_AMOUNT, capital_name: new_capital_name);
+    @capital = Capital.new(user_id: current_user.id, amount: CAPITAL_AMOUNT, capital_name: new_capital_name, purchase_id: purchase.id);
 
     @capital.save
 

@@ -12,16 +12,18 @@ class TransactionsController < ApplicationController
   end
   
   def create
+    # create purchase
+    new_purchase = PurchasesController.new
+    transaction_purchase = new_purchase.create(@current_user)
     # create a capital
     # use it to create a transaction;
     new_capital = CapitalsController.new
-    transaction_capital = new_capital.create(@current_user);
+    transaction_capital = new_capital.create(transaction_purchase);
 
 
     @transaction = Transaction.new(capital_id: transaction_capital.id, amount: transaction_capital.amount, transaction_type: "deposit", week_number: 0)
 
     @transaction.save
-
 
     render json: {
       transaction: @transaction
