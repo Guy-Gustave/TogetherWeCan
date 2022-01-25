@@ -18,7 +18,7 @@ class CapitalsController < ApplicationController
     # current_user = User.where(id: purchase.user_id)
     new_capital_name = Capital.set_new_capital_name(purchase)
     
-    @capital = Capital.new(user_id: current_user.id, amount: CAPITAL_AMOUNT, capital_name: new_capital_name, purchase_id: purchase.id);
+    @capital = Capital.new(user_id: purchase.user_id, amount: CAPITAL_AMOUNT, capital_name: new_capital_name, purchase_id: purchase.id);
 
     @capital.save
 
