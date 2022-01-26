@@ -12,22 +12,38 @@ class TransactionsController < ApplicationController
   end
   
   def create
-    # create purchase
-    new_purchase = PurchasesController.new
-    transaction_purchase = new_purchase.create(@current_user)
-    # create a capital
-    # use it to create a transaction;
-    new_capital = CapitalsController.new
-    transaction_capital = new_capital.create(transaction_purchase);
+    shares_number = capital_params["shares_number"].to_i
+
+    transactions = []
+
+    if shares_number && shares_number > 0
+      i = 1
+      while i <= shares_number
+        # create purchase
+        new_purchase = PurchasesController.new
+        transaction_purchase = new_purchase.create(@current_user)
+        # create a capital
+        # use it to create a transaction;
+        new_capital = CapitalsController.new
+        transaction_capital = new_capital.create(transaction_purchase);
 
 
-    @transaction = Transaction.new(capital_id: transaction_capital.id, amount: transaction_capital.amount, transaction_type: "deposit", week_number: 0)
+        @transaction = Transaction.new(capital_id: transaction_capital.id, amount: transaction_capital.amount, transaction_type: "deposit", week_number: 0)
 
-    @transaction.save
+        @transaction.save
 
-    render json: {
-      transaction: @transaction
-    }
+        transactions << @transaction
+        i += 1
+      end
+
+      render json: {
+        transactions: transactions
+      }, status: :created
+    else
+      render json: {
+        error: "Please specify a number of shares"
+      }, status: 422      
+    end
   end
 
 
@@ -39,4 +55,9 @@ class TransactionsController < ApplicationController
 
   end
 
+  private
+
+  def capital_params
+    params.require(:transaction).permit(:shares_number)
+  end
 end
