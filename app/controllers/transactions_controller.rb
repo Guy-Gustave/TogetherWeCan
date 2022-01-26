@@ -46,12 +46,19 @@ class TransactionsController < ApplicationController
     end
   end
 
-
   def create_gift_payment(capital)
     new_gift_payment = GiftsController.new
     transaction_gift = new_gift_payment.create(@current_user, capital)
 
     @transaction = Transaction.new(capital_id: capital.id, amount: transaction_gift.amount, transaction_type: "payment", gift_id: transaction_gift.id, week_number: 0)
+    @transaction.save
+    
+    if capital.period == 0
+      capital.period += 1
+    else
+      capital.period += 3
+    end
+    capital.save
 
   end
 
