@@ -1,3 +1,3 @@
 module CapitalsHelper
-  CAPITAL_AMOUNT = 300
+  CAPITAL_AMOUNT = 150
 end
