@@ -1,3 +1,5 @@
 module GiftsHelper
-  GIFT_AMOUNT = 55
+  include CapitalsHelper
+
+  GIFT_AMOUNT = (CAPITAL_AMOUNT/5.5).round
 end
