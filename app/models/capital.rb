@@ -25,7 +25,7 @@ class Capital < ApplicationRecord
     if last_capital
       new_capital_name = last_capital.capital_name
       new_capital_name.delete_prefix!("capital-")
-      new_capital_name = "capital" + (new_capital_name.to_i + 1).to_s;
+      new_capital_name = "capital-" + (new_capital_name.to_i + 1).to_s;
     else
       new_capital_name = "capital-1"
     end
