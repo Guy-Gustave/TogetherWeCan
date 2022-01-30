@@ -64,6 +64,22 @@ class TransactionsController < ApplicationController
     update_saving_in_purchases(capital)
   end
 
+  def create_next_capitals(purchase)
+    number_of_capitals = purchase.next_capitals
+
+    i = 0
+    while i < number_of_capitals
+      new_capital = CapitalsController.new
+      transaction_capital = new_capital.create(purchase);
+  
+      transaction = Transaction.new(capital_id: transaction_capital.id, amount: transaction_capital.amount, transaction_type: "deposit", week_number: 0)
+  
+      transaction.save
+
+      i += 1
+    end
+  end
+
   private
 
   def capital_params
@@ -71,7 +87,7 @@ class TransactionsController < ApplicationController
   end
 
   def update_saving_in_purchases(capital)
-    purchase = Purchase.where(id: capital.purchase_id)
+    purchase = Purchase.where(id: capital.purchase_id).first
 
     purchase.savings_amount = purchase.savings_amount.to_i if purchase.savings_amount == nil
 

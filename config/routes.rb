@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   delete :logout, to: "sessions#logout"
   get :logged_in, to: "sessions#logged_in"
   post :payment, to: "transactions#create_gift_payment"
+  post :capitals_generation, to: "transactions#create_next_capitals"
 
   root to: 'transactions#index'
 end
