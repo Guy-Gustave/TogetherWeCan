@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :transactions, only: [:create]
   resources :purchases, only: [:index]
   resources :gifts, only: [:index]
+  resources :savings, only: [:index]
 
   delete :logout, to: "sessions#logout"
   get :logged_in, to: "sessions#logged_in"
