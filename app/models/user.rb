@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many :capitals, dependent: :destroy
   has_many :gifts, dependent: :destroy
   has_many :purchases, dependent: :destroy
+  has_many :savings
 
   validates :first_name, presence: true, length: { minimum: 3 }
   validates :last_name, presence: true, length: { minimum: 3 }

@@ -3,6 +3,7 @@ class Capital < ApplicationRecord
   belongs_to :purchase
   has_many :gifts, dependent: :destroy
   has_many :transactions, dependent: :destroy
+  has_many :savings
 
   validates :amount, presence: true
   validates :user, presence: true
