@@ -61,7 +61,7 @@ class TransactionsController < ApplicationController
     end
     capital.save
 
-    update_saving_in_purchases(capital)
+    create_saving(capital)
   end
 
   def create_next_capitals(purchase)
@@ -101,4 +101,10 @@ class TransactionsController < ApplicationController
     purchase.save
   end
 
+  def create_saving(capital)
+    saving = Saving.new(user_id: @current_user.id, capital_id: capital.id, savings_amount: SAVING_AMOUNT)
+    if saving.save
+      update_saving_in_purchases(capital)
+    end
+  end
 end
