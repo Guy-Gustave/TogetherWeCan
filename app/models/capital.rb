@@ -5,9 +5,12 @@ class Capital < ApplicationRecord
   has_many :transactions, dependent: :destroy
   has_many :savings
 
+  CAPITAL_STATUS = ["original", "recreated"]
+
   validates :amount, presence: true
   validates :user, presence: true
   validates :capital_name, presence: true
+  validates :capital_status, presence: true, inclusion: { in: CAPITAL_STATUS }
 
   before_validation :load_defaults
 
