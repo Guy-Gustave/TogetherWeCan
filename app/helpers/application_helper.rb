@@ -18,6 +18,15 @@ module ApplicationHelper
     false
   end
 
+  def determine_aurthorization_of_recreation(capital)
+    maturity_time = capital.updated_at.to_s
+
+    week_past = Date.parse(maturity_time).upto(Data.today).count.fdiv(7).floor
+
+    return false if week_past != 1
+
+    true
+  end
 
   def make_payments
     capitals = Capital.all
@@ -35,5 +44,22 @@ module ApplicationHelper
       i += 1
     end
 
+  end
+
+
+  def recreate_capitals 
+    capitals = Capital.where(gift_payment: 3)
+    
+    i = 0
+    while i < capitals.length
+      allow_recreation = false;
+      allow_recreation = determine_aurthorization_of_recreation(capital);
+
+      if allow_recreation
+        transaction = TransactionsController.new
+        transaction.recreate_capital(capitals[i])
+      end
+      i += 1
+    end
   end
 end
