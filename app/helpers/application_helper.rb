@@ -3,6 +3,9 @@ module ApplicationHelper
   def determine_authorization_of_payment(capital)
     current_period = capital.period
     capital_creation_date = capital.created_at.to_s
+
+    capital_creation_date = capital.recreation_date if capital.capital_status == "recreated"
+
     target_period  = 3
 
     target_period = 1 if current_period == 0
@@ -48,7 +51,8 @@ module ApplicationHelper
 
 
   def recreate_capitals 
-    capitals = Capital.where(gift_payment: 3)
+    capitals = Capital.where(gift_counter: 3).where.not("capital_name = 'capital-1' and capital_status = 'original'").or(Capital.where(gift_counter: 4, capital_status: "original", capital_name: "capital-1"))
+
     
     i = 0
     while i < capitals.length
