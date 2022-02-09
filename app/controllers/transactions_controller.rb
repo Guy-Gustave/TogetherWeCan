@@ -54,12 +54,14 @@ class TransactionsController < ApplicationController
     @transaction = Transaction.new(capital_id: capital.id, amount: transaction_gift.amount, transaction_type: "payment", gift_id: transaction_gift.id, week_number: 0)
     @transaction.save
     
+    local_period = 0
     if capital.period == 0
-      capital.period += 1
+      local_period += 1
     else
-      capital.period += 3
+      local_period = capital.period + 3
     end
-    capital.save
+
+    capital.update(period: local_period, gift_counter: (capital.gift_counter + 1))
 
     create_saving(capital)
   end
