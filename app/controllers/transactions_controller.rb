@@ -80,6 +80,18 @@ class TransactionsController < ApplicationController
     end
   end
 
+  def recreate_capital(capital)
+    new_recreation_date = capital.updated_at.to_s
+    new_recreation_date = (Date.parse(new_recreation_date) + 7).to_s
+
+    capital.update(period: 0, gift_counter: 0, recreation_date: new_recreation_date, capital_status: "recreated")
+
+    render json: {
+      capital_updated: capital
+    }
+  end
+
+
   private
 
   def capital_params
