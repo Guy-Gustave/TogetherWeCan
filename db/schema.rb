@@ -32,7 +32,7 @@ ActiveRecord::Schema.define(version: 2022_02_09_084352) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "purchase_id", null: false
-    t.integer "gift_counter"
+    t.integer "gift_counter", default: 0
     t.string "recreation_date"
     t.string "capital_status", default: "original"
     t.index ["purchase_id"], name: "index_capitals_on_purchase_id"
