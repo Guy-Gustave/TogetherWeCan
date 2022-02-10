@@ -86,7 +86,12 @@ class TransactionsController < ApplicationController
     new_recreation_date = capital.updated_at.to_s
     new_recreation_date = (Date.parse(new_recreation_date) + 7).to_s
 
-    capital.update(period: 0, gift_counter: 0, recreation_date: new_recreation_date, capital_status: "recreated")
+    capital_amount = CAPITAL_AMOUNT
+    purchase = capital.purcahse
+
+    capital_amount = CAPITAL_AMOUNT_2 if purchase.week_number >= 33
+
+    capital.update(amount: capital_amount, period: 0, gift_counter: 0, recreation_date: new_recreation_date, capital_status: "recreated")
 
     render json: {
       capital_updated: capital
