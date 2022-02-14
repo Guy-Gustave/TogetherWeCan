@@ -10,7 +10,7 @@ class GiftsController < ApplicationController
   end
 
   def create(current_user, capital)
-    @gift = Gift.new(user_id: current_user.id, capital_id: capital.id, amount: GIFT_AMOUNT, purchase_id: capital.purchase_id)
+    @gift = Gift.new(user_id: current_user.id, capital_id: capital.id, amount: get_gift_amount(capital), purchase_id: capital.purchase_id)
 
     @gift.save
     @gift
