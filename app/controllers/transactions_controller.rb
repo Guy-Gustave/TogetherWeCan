@@ -98,7 +98,6 @@ class TransactionsController < ApplicationController
     }
   end
 
-
   private
 
   def capital_params
@@ -110,18 +109,21 @@ class TransactionsController < ApplicationController
 
     purchase.savings_amount = purchase.savings_amount.to_i if purchase.savings_amount == nil
 
-    purchase.savings_amount += SAVING_AMOUNT
+    purchase.savings_amount += get_saving_amount(capital)
 
-    if purchase.savings_amount == CAPITAL_AMOUNT
+    capital_amount = CAPITAL_AMOUNT
+    # capital_amount = CAPITAL_AMOUNT_2 if purchase.week_number >= 33
+    
+    if purchase.savings_amount >= capital_amount
       purchase.next_capitals = purchase.next_capitals.to_i + 1
-      purchase.savings_amount = 0
+      purchase.savings_amount = purchase.savings_amount - capital_amount
     end
 
     purchase.save
   end
 
   def create_saving(capital)
-    saving = Saving.new(user_id: @current_user.id, capital_id: capital.id, savings_amount: SAVING_AMOUNT)
+    saving = Saving.new(user_id: @current_user.id, capital_id: capital.id, savings_amount: get_saving_amount(capital))
     if saving.save
       update_saving_in_purchases(capital)
     end
