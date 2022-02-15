@@ -17,6 +17,8 @@ class TransactionsController < ApplicationController
 
     transactions = []
 
+    account_balance = IshamiAccountBalance.where(ishami_bank_account_id: 1).first
+
     if shares_number && shares_number > 0
       i = 1
       while i <= shares_number
@@ -28,8 +30,14 @@ class TransactionsController < ApplicationController
         new_capital = CapitalsController.new
         transaction_capital = new_capital.create(transaction_purchase);
 
+        if account_balance
+          account_balance.update(total_amount: (account_balance.total_amount + transaction_capital.amount))
+        else
+          account_balance = IshamiAccountBalance.new(total_amount: transaction_capital.amount, saving_amount: 0, ishami_bank_account_id: 1)
+          account_balance.save
+        end
 
-        @transaction = Transaction.new(capital_id: transaction_capital.id, amount: transaction_capital.amount, transaction_type: "deposit", week_number: 0)
+        @transaction = Transaction.new(capital_id: transaction_capital.id, amount: transaction_capital.amount, transaction_type: "deposit", week_number: 0, ishami_account_balance_id: account_balance.id)
 
         @transaction.save
 
@@ -51,7 +59,12 @@ class TransactionsController < ApplicationController
     new_gift_payment = GiftsController.new
     transaction_gift = new_gift_payment.create(@current_user, capital)
 
-    @transaction = Transaction.new(capital_id: capital.id, amount: transaction_gift.amount, transaction_type: "payment", gift_id: transaction_gift.id, week_number: 0)
+    total_payment = transaction_gift.amount + get_saving_amount(capital) + (transaction_gift.amount * ADMIN_FEE_PERCENT)
+
+    account_balance = IshamiAccountBalance.where(ishami_bank_account_id: 1).first
+    account_balance.update(saving_amount: (account_balance.saving_amount + get_saving_amount(capital)), total_amount: (account_balance.total_amount - total_payment))
+
+    @transaction = Transaction.new(capital_id: capital.id, amount: transaction_gift.amount, transaction_type: "payment", gift_id: transaction_gift.id, week_number: 0, ishami_account_balance_id: account_balance.id)
     @transaction.save
     
     local_period = 0
@@ -69,12 +82,15 @@ class TransactionsController < ApplicationController
   def create_next_capitals(purchase)
     number_of_capitals = purchase.next_capitals
 
+    account_balance = IshamiAccountBalance.where(ishami_bank_account_id: 1).first
     i = 0
     while i < number_of_capitals
       new_capital = CapitalsController.new
       transaction_capital = new_capital.create(purchase);
+
+      account_balance.update(total_amount: (account_balance.total_amount + transaction_capital.amount), saving_amount: account_balance.saving_amount - transaction_capital.amount)
   
-      transaction = Transaction.new(capital_id: transaction_capital.id, amount: transaction_capital.amount, transaction_type: "deposit", week_number: 0)
+      transaction = Transaction.new(capital_id: transaction_capital.id, amount: transaction_capital.amount, transaction_type: "deposit", week_number: 0, ishami_account_balance_id: account_balance.id)
   
       transaction.save
 
@@ -93,6 +109,13 @@ class TransactionsController < ApplicationController
 
     capital.update(amount: capital_amount, period: 0, gift_counter: 0, recreation_date: new_recreation_date, capital_status: "recreated")
 
+    account_balance = IshamiAccountBalance.where(ishami_bank_account_id: 1).first
+    account_balance.update(total_amount: (account_balance.total_amount + capital.amount))
+
+    transaction = Transaction.new(capital_id: capital.id, amount: capital.amount, transaction_type: "deposit", week_number: 0, ishami_account_balance_id: account_balance.id)
+  
+    transaction.save
+    
     render json: {
       capital_updated: capital
     }
