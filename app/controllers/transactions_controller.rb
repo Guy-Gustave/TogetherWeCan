@@ -69,6 +69,8 @@ class TransactionsController < ApplicationController
     @transaction = Transaction.new(capital_id: capital.id, amount: transaction_gift.amount, transaction_type: "payment", gift_id: transaction_gift.id, week_number: 0, ishami_account_balance_id: account_balance.id)
     @transaction.save
     
+    update_admin_amount(transaction_gift)
+
     local_period = 0
     if capital.period == 0
       local_period += 1
@@ -170,4 +172,17 @@ class TransactionsController < ApplicationController
       update_saving_in_purchases(capital)
     end
   end
+
+  def update_admin_amount(gift) 
+    admin = AdminAccount.first
+    admin_fee = gift.amount * ADMIN_FEE_PERCENT
+
+    if admin
+      admin.update(total_admin_amount: (admin.total_admin_amount + admin_fee))
+    else
+      admin = AdminAccount.new(ishami_bank_account_id: 2, total_admin_amount: admin_fee)
+      admin.save
+    end
+  end
+
 end
