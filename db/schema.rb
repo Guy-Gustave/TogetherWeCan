@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_15_104533) do
+ActiveRecord::Schema.define(version: 2022_02_16_101920) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 2022_02_15_104533) do
     t.bigint "ishami_bank_account_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.decimal "total_gift_amount", default: "0.0"
     t.index ["ishami_bank_account_id"], name: "index_ishami_account_balances_on_ishami_bank_account_id"
   end
 
@@ -75,6 +76,7 @@ ActiveRecord::Schema.define(version: 2022_02_15_104533) do
     t.decimal "savings_amount"
     t.integer "next_capitals"
     t.integer "week_number", default: 0
+    t.decimal "purchase_gift_amount", default: "0.0"
     t.index ["user_id"], name: "index_purchases_on_user_id"
   end
 
