@@ -103,7 +103,7 @@ class TransactionsController < ApplicationController
     new_recreation_date = (Date.parse(new_recreation_date) + 7).to_s
 
     capital_amount = CAPITAL_AMOUNT
-    purchase = capital.purcahse
+    purchase = capital.purchase
 
     capital_amount = CAPITAL_AMOUNT_2 if purchase.week_number >= 33
 
