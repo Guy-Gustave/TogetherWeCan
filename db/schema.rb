@@ -16,12 +16,11 @@ ActiveRecord::Schema.define(version: 2022_02_16_101920) do
   enable_extension "plpgsql"
 
   create_table "admin_accounts", force: :cascade do |t|
-    t.bigint "gift_id", null: false
-    t.integer "week_number"
-    t.decimal "amount"
+    t.bigint "ishami_bank_account_id", null: false
+    t.decimal "total_admin_amount", default: "0.0"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["gift_id"], name: "index_admin_accounts_on_gift_id"
+    t.index ["ishami_bank_account_id"], name: "index_admin_accounts_on_ishami_bank_account_id"
   end
 
   create_table "capitals", force: :cascade do |t|
@@ -119,7 +118,7 @@ ActiveRecord::Schema.define(version: 2022_02_16_101920) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  add_foreign_key "admin_accounts", "gifts"
+  add_foreign_key "admin_accounts", "ishami_bank_accounts"
   add_foreign_key "capitals", "purchases"
   add_foreign_key "capitals", "users"
   add_foreign_key "gifts", "capitals"
