@@ -62,8 +62,10 @@ class TransactionsController < ApplicationController
     total_payment = transaction_gift.amount + get_saving_amount(capital) + (transaction_gift.amount * ADMIN_FEE_PERCENT)
 
     account_balance = IshamiAccountBalance.where(ishami_bank_account_id: 1).first
-    account_balance.update(saving_amount: (account_balance.saving_amount + get_saving_amount(capital)), total_amount: (account_balance.total_amount - total_payment))
+    account_balance.update(saving_amount: (account_balance.saving_amount + get_saving_amount(capital)), total_amount: (account_balance.total_amount - total_payment), total_gift_amount: (account_balance.total_gift_amount + transaction_gift.amount))
 
+    update_gift_amount_in_purchase(capital, transaction_gift);
+    
     @transaction = Transaction.new(capital_id: capital.id, amount: transaction_gift.amount, transaction_type: "payment", gift_id: transaction_gift.id, week_number: 0, ishami_account_balance_id: account_balance.id)
     @transaction.save
     
@@ -96,6 +98,7 @@ class TransactionsController < ApplicationController
 
       i += 1
     end
+    purchase.update(next_capitals: 0)
   end
 
   def recreate_capital(capital)
@@ -110,7 +113,9 @@ class TransactionsController < ApplicationController
     capital.update(amount: capital_amount, period: 0, gift_counter: 0, recreation_date: new_recreation_date, capital_status: "recreated")
 
     account_balance = IshamiAccountBalance.where(ishami_bank_account_id: 1).first
-    account_balance.update(total_amount: (account_balance.total_amount + capital.amount))
+    account_balance.update(total_amount: (account_balance.total_amount + capital.amount), total_gift_amount: (account_balance.total_gift_amount - capital_amount))
+
+    update_gift_amount_in_purchase(capital, nil, purchase, capital_amount);
 
     transaction = Transaction.new(capital_id: capital.id, amount: capital.amount, transaction_type: "deposit", week_number: 0, ishami_account_balance_id: account_balance.id)
   
@@ -144,6 +149,20 @@ class TransactionsController < ApplicationController
 
     purchase.save
   end
+
+  def update_gift_amount_in_purchase(capital, gift = nil, purchase = nil, capital_amount = nil)
+
+    return if (gift && purchase)
+
+    if gift
+      local_purchase = capital.purchase
+
+      local_purchase.update(purchase_gift_amount: (local_purchase.purchase_gift_amount + gift.amount))
+    else
+      purchase.update(purchase_gift_amount: (purchase.purchase_gift_amount - capital_amount))
+    end
+  end
+
 
   def create_saving(capital)
     saving = Saving.new(user_id: @current_user.id, capital_id: capital.id, savings_amount: get_saving_amount(capital))
