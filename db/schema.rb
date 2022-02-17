@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_16_101920) do
+ActiveRecord::Schema.define(version: 2022_02_17_215316) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "admin_accounts", force: :cascade do |t|
     t.bigint "ishami_bank_account_id", null: false
-    t.decimal "total_admin_amount", default: "0.0"
+    t.decimal "total_admin_amount"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["ishami_bank_account_id"], name: "index_admin_accounts_on_ishami_bank_account_id"
