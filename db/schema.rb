@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 2022_02_23_100931) do
 
   create_table "bonus_earnings", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.decimal "share_bonus_amount", default: "0.0"
-    t.decimal "invitation_bonus_amount", default: "0.0"
+    t.decimal "bonus_amount", default: "0.0"
+    t.string "bonus_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_bonus_earnings_on_user_id"
