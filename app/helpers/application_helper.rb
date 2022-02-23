@@ -66,4 +66,13 @@ module ApplicationHelper
       i += 1
     end
   end
+
+  def create_next_purchase_capitals
+    #instigate the creation of next capitals.
+  end
+
+  def make_bonus_payments
+    #instigate the creation of bonus payments.
+  end
+
 end
