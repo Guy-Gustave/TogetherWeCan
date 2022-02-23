@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_22_145522) do
+ActiveRecord::Schema.define(version: 2022_02_23_100931) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,15 @@ ActiveRecord::Schema.define(version: 2022_02_22_145522) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["ishami_bank_account_id"], name: "index_admin_accounts_on_ishami_bank_account_id"
+  end
+
+  create_table "bonus_earnings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.decimal "share_bonus_amount", default: "0.0"
+    t.decimal "invitation_bonus_amount", default: "0.0"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_bonus_earnings_on_user_id"
   end
 
   create_table "capitals", force: :cascade do |t|
@@ -64,6 +73,7 @@ ActiveRecord::Schema.define(version: 2022_02_22_145522) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.decimal "total_gift_amount", default: "0.0"
+    t.decimal "total_bonus_amount", default: "0.0"
     t.index ["ishami_bank_account_id"], name: "index_ishami_account_balances_on_ishami_bank_account_id"
   end
 
@@ -126,6 +136,7 @@ ActiveRecord::Schema.define(version: 2022_02_22_145522) do
   end
 
   add_foreign_key "admin_accounts", "ishami_bank_accounts"
+  add_foreign_key "bonus_earnings", "users"
   add_foreign_key "capitals", "purchases"
   add_foreign_key "capitals", "users"
   add_foreign_key "gifts", "capitals"
