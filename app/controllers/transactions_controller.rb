@@ -2,6 +2,7 @@ class TransactionsController < ApplicationController
 
   include CurrentUserConcern
   include GiftsHelper
+  include TransactionsHelper
 
   def index
     @transactions = Transaction.all
@@ -128,6 +129,52 @@ class TransactionsController < ApplicationController
     }
   end
 
+  def create_bonuses
+    #with the below query, only users who have ever bought a capital will receive bonuses.
+    users = User.all.includes(:capitals).where('capital_name = ?', "capital-1").references(:capitals)
+
+    total_bonus = 0;
+
+    users.each do |user|
+
+      user_invites = user.invitees.includes(:capitals)
+      user_invitees_capitals = 0
+      user_capitals = 0
+
+      user_invites.each do |invite|
+        total_capitals = 0
+        invite.capitals.each do |capital|
+          total_capitals += 1 if capital.capital_name == "capital-1"
+        end
+        user_invitees_capitals += total_capitals
+      end
+      
+      user_invitation_bonus_amount = determine_bonus_amount(nil, user_invitees_capitals)
+      user_invitation_bonus = BonusEarning.new(user_id: user.id, bonus_amount: user_invitation_bonus_amount, bonus_type: "invitation_bonus");
+      user_invitation_bonus.save
+
+      user_capitals = user.capitals.length
+      user_shares_bonus_amount = determine_bonus_amount(user_capitals)
+      user_shares_bonus = BonusEarning.new(user_id: user.id, bonus_amount: user_shares_bonus_amount, bonus_type: "share_bonus");
+      user_shares_bonus.save
+
+      total_bonus += (user_invitation_bonus_amount + user_shares_bonus_amount)
+
+    end
+
+    account_balance = IshamiAccountBalance.where(ishami_bank_account_id: 1).first
+    account_balance.update(total_bonus_amount: (account_balance.total_bonus_amount + total_bonus))
+
+    admin = AdminAccount.find(1)
+    admin.update(total_admin_amount: (admin.total_admin_amount - total_bonus))
+
+  end
+
+
+  
+
+  #***--- PRIVATE FUNCTIONS START HERE ---***#
+
   private
 
   def capital_params
@@ -185,4 +232,28 @@ class TransactionsController < ApplicationController
     end
   end
 
+  def determine_bonus_amount(user_capitals = nil, user_invitees_capitals = nil)
+
+    return if ((user_capitals && user_invitees_capitals) || (!user_capitals && !user_invitees_capitals))
+
+    bonus_amount = 0
+    case user_capitals ? user_capitals : user_invitees_capitals
+    when 1..5
+      bonus_amount = user_capitals ? BONUS_SHARE_HASH[:"5"] : BONUS_INVITATION_HASH[:"5"]
+    when 6..49
+      bonus_amount = user_capitals ? BONUS_SHARE_HASH[:"49"] : BONUS_INVITATION_HASH[:"49"]
+    when 50..199
+      bonus_amount = user_capitals ? BONUS_SHARE_HASH[:"199"] : BONUS_INVITATION_HASH[:"199"] 
+    when 200..499
+      bonus_amount = user_capitals ? BONUS_SHARE_HASH[:"499"] : BONUS_INVITATION_HASH[:"499"] 
+    when 500..999
+      bonus_amount = user_capitals ? BONUS_SHARE_HASH[:"999"] : BONUS_INVITATION_HASH[:"999"] 
+    when 1000..1999
+      bonus_amount = user_capitals ? BONUS_SHARE_HASH[:"1999"] : BONUS_INVITATION_HASH[:"1999"] 
+    else
+      bonus_amount = user_capitals ? BONUS_SHARE_HASH[:"2000"] : BONUS_INVITATION_HASH[:"2000"]
+    end
+
+    bonus_amount
+  end
 end
