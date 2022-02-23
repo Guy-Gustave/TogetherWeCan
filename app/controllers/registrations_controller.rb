@@ -6,6 +6,7 @@ class RegistrationsController < ApplicationController
 
       if user.save
         session[:user_id] = user.id
+        create_invitation(params['user']['inviter_email'], user) if params['user']['inviter_email'] != ""
         render json: {
           status: :created,
           logged_in: true,
@@ -35,4 +36,10 @@ class RegistrationsController < ApplicationController
   # def confirmation_params
   #   params.require(:user).permit(:)
   # end
+  
+  def create_invitation(email, created_user)
+    inviter = User.find_by(email: email)
+    invitation_entry = Invitation.new(inviter_id: inviter.id, invitee_id: created_user.id)
+    invitation_entry.save
+  end
 end
