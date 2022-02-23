@@ -4,6 +4,7 @@ class User < ApplicationRecord
   has_many :gifts, dependent: :destroy
   has_many :purchases, dependent: :destroy
   has_many :savings
+  has_many :bonus_earnings
 
   has_many :invited_users, foreign_key: :inviter_id, class_name: 'Invitation', dependent: :destroy
   has_many :invitees, through: :invited_users, dependent: :destroy
