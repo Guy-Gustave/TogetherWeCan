@@ -56,9 +56,9 @@ class TransactionsController < ApplicationController
     end
   end
 
-  def create_gift_payment(capital)
+  def create_gift_payment
     new_gift_payment = GiftsController.new
-    transaction_gift = new_gift_payment.create(@current_user, capital)
+    transaction_gift = new_gift_payment.create(capital.user, capital)
 
     total_payment = transaction_gift.amount + get_saving_amount(capital) + (transaction_gift.amount * ADMIN_FEE_PERCENT)
 
@@ -238,6 +238,8 @@ class TransactionsController < ApplicationController
 
     bonus_amount = 0
     case user_capitals ? user_capitals : user_invitees_capitals
+    when 0
+      bonus_amount = 0
     when 1..5
       bonus_amount = user_capitals ? BONUS_SHARE_HASH[:"5"] : BONUS_INVITATION_HASH[:"5"]
     when 6..49
