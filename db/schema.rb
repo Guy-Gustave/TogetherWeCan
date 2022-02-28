@@ -43,6 +43,8 @@ ActiveRecord::Schema.define(version: 2022_02_23_100931) do
     t.integer "gift_counter", default: 0
     t.string "recreation_date"
     t.string "capital_status", default: "original"
+    t.string "phase_status", default: "phase_1"
+    t.string "new_creation_date"
     t.index ["purchase_id"], name: "index_capitals_on_purchase_id"
     t.index ["user_id"], name: "index_capitals_on_user_id"
   end
