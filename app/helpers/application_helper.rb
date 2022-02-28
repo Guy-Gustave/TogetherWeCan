@@ -1,14 +1,15 @@
 module ApplicationHelper
+  PHASE_2_WEEK = 33
 
   def determine_authorization_of_payment(capital)
     current_period = capital.period
-    capital_creation_date = capital.created_at.to_s
+    capital_creation_date = capital.phase_status == 'phase_2' ? capital.new_creation_date : capital.created_at.to_s 
 
-    capital_creation_date = capital.recreation_date if capital.capital_status == "recreated"
+    capital_creation_date = capital.recreation_date if capital.capital_status == 'recreated'
 
-    target_period  = 3
+    target_period = capital.purchase.week_number >= PHASE_2_WEEK ? 2 : 3
 
-    target_period = 1 if current_period == 0
+    target_period = 1 if current_period.zero
 
     # total_weeks_covered = Date.parse(capital_creation_date).upto(Date.today).count.fdiv(7).floor
 
@@ -46,18 +47,18 @@ module ApplicationHelper
 
       i += 1
     end
-
   end
 
+  # def select_capital
 
-  def recreate_capitals 
-    capitals = Capital.where(gift_counter: 3).where.not("capital_name = 'capital-1' and capital_status = 'original'").or(Capital.where(gift_counter: 4, capital_status: "original", capital_name: "capital-1"))
+  # end
 
-    
+  def recreate_capitals
+    capitals = Capital.where(gift_counter: 3).where.not("capital_name = 'capital-1' and capital_status = 'original'").or(Capital.where(gift_counter: 4, capital_status: "original", capital_name: "capital-1", phase_status: 'phase_1')).or(Capital.where(gift_counter: 3, capital_status: "original", capital_name: "capital-1", phase_status: 'phase_2'))
     i = 0
     while i < capitals.length
-      allow_recreation = false;
-      allow_recreation = determine_aurthorization_of_recreation(capital);
+      allow_recreation = false
+      allow_recreation = determine_aurthorization_of_recreation(capital)
 
       if allow_recreation
         transaction = TransactionsController.new
