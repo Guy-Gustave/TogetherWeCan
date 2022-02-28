@@ -1,6 +1,6 @@
 class TransactionsController < ApplicationController
-
   include CurrentUserConcern
+  include ApplicationHelper
   include GiftsHelper
   include TransactionsHelper
 
@@ -51,8 +51,8 @@ class TransactionsController < ApplicationController
       }, status: :created
     else
       render json: {
-        error: "Please specify a number of shares"
-      }, status: 422      
+        error: 'Please specify a number of shares'
+      }, status: 422
     end
   end
 
@@ -91,7 +91,7 @@ class TransactionsController < ApplicationController
     i = 0
     while i < number_of_capitals
       new_capital = CapitalsController.new
-      transaction_capital = new_capital.create(purchase);
+      transaction_capital = purchase.week_number >= PHASE_2_WEEK ? new_capital.update_capital_phase(purchase) : new_capital.create(purchase)
 
       account_balance.update(total_amount: (account_balance.total_amount + transaction_capital.amount), saving_amount: account_balance.saving_amount - transaction_capital.amount)
   
@@ -109,11 +109,25 @@ class TransactionsController < ApplicationController
     new_recreation_date = (Date.parse(new_recreation_date) + 7).to_s
 
     capital_amount = CAPITAL_AMOUNT
+    
     purchase = capital.purchase
+    capital_amount = CAPITAL_AMOUNT_2 if purchase.week_number >= PHASE_2_WEEK
+    
+    if purchase.week_number >= PHASE_2_WEEK
+      if (capital.phase_status == 'phase_2') || (capital.capital_name == 'capital-1')
+        status = 'recreated'
+        status = 'original' if (capital.capital_name == 'capital-1') && (capital.phase_status != 'phase_2')
+        capital.update(amount: capital_amount, period: 0, gift_counter: 0, recreation_date: new_recreation_date, capital_status: status, phase_status: 'phase_2')
 
-    capital_amount = CAPITAL_AMOUNT_2 if purchase.week_number >= 33
+        if status == 'original'
+          capital.update(new_creation_date: capital.updated_at.to_s)
+        end
 
-    capital.update(amount: capital_amount, period: 0, gift_counter: 0, recreation_date: new_recreation_date, capital_status: "recreated")
+      end
+
+    else
+      capital.update(amount: capital_amount, period: 0, gift_counter: 0, recreation_date: new_recreation_date, capital_status: 'recreated')
+    end
 
     account_balance = IshamiAccountBalance.where(ishami_bank_account_id: 1).first
     account_balance.update(total_amount: (account_balance.total_amount + capital.amount), total_gift_amount: (account_balance.total_gift_amount - capital_amount))
@@ -123,7 +137,7 @@ class TransactionsController < ApplicationController
     transaction = Transaction.new(capital_id: capital.id, amount: capital.amount, transaction_type: "deposit", week_number: 0, ishami_account_balance_id: account_balance.id)
   
     transaction.save
-    
+
     render json: {
       capital_updated: capital
     }
@@ -189,7 +203,7 @@ class TransactionsController < ApplicationController
     purchase.savings_amount += get_saving_amount(capital)
 
     capital_amount = CAPITAL_AMOUNT
-    # capital_amount = CAPITAL_AMOUNT_2 if purchase.week_number >= 33
+    # capital_amount = CAPITAL_AMOUNT_2 if purchase.week_number >= PHASE_2_WEEK
     
     if purchase.savings_amount >= capital_amount
       purchase.next_capitals = purchase.next_capitals.to_i + 1
