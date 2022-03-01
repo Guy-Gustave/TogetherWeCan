@@ -9,7 +9,7 @@ module GiftsHelper
 
   def get_gift_amount(capital)
     gift_amount = (capital.amount / 5.5).round
-    gift_amount = (capital.amount / 4.05).round if capital.purchase.week_number >= 17
+    gift_amount = (capital.amount / 4.5).round if capital.purchase.week_number >= 17
     gift_amount = (capital.amount / 4).round if capital.purchase.week_number >= 33
     gift_amount
   end
