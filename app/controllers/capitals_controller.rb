@@ -27,9 +27,11 @@ class CapitalsController < ApplicationController
 
   def update_capital_phase(purchase)
     new_capital_name = Capital.set_new_capital_name(purchase)
-    capital = Capital.where(user_id: purchase.user_id, purchase_id: purchase.id, capital_name: new_capital_name)
+    capital = Capital.where(user_id: purchase.user_id, purchase_id: purchase.id, capital_name: new_capital_name).first
     capital.update(phase_status: 'phase_2', capital_status: 'original')
     capital.update(new_creation_date: capital.updated_at.to_s)
+
+    capital
   end
   
   private
