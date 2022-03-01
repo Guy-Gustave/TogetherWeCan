@@ -56,7 +56,9 @@ class TransactionsController < ApplicationController
     end
   end
 
-  def create_gift_payment
+  def create_gift_payment(capital)
+    return if capital.purchase.week_number >= PHASE_2_WEEK && capital.phase_status == "phase_1"
+
     new_gift_payment = GiftsController.new
     transaction_gift = new_gift_payment.create(capital.user, capital)
 
@@ -101,7 +103,9 @@ class TransactionsController < ApplicationController
 
       i += 1
     end
-    purchase.update(next_capitals: 0)
+    purchase_savings_amount = purchase.week_number == (PHASE_2_WEEK - 1) ? 0 : purchase.savings_amount
+
+    purchase.update(next_capitals: 0, savings_amount: purchase_savings_amount)
   end
 
   def recreate_capital(capital)
@@ -203,7 +207,7 @@ class TransactionsController < ApplicationController
     purchase.savings_amount += get_saving_amount(capital)
 
     capital_amount = CAPITAL_AMOUNT
-    # capital_amount = CAPITAL_AMOUNT_2 if purchase.week_number >= PHASE_2_WEEK
+    capital_amount = CAPITAL_AMOUNT_2 if purchase.week_number >= PHASE_2_WEEK
     
     if purchase.savings_amount >= capital_amount
       purchase.next_capitals = purchase.next_capitals.to_i + 1
@@ -228,7 +232,8 @@ class TransactionsController < ApplicationController
 
 
   def create_saving(capital)
-    saving = Saving.new(user_id: @current_user.id, capital_id: capital.id, savings_amount: get_saving_amount(capital))
+    return if (capital.purchase.week_number >= (PHASE_2_WEEK - 1)) && (capital.phase_status == "phase_1")
+    saving = Saving.new(user_id: capital.user_id, capital_id: capital.id, savings_amount: get_saving_amount(capital))
     if saving.save
       update_saving_in_purchases(capital)
     end
