@@ -33,15 +33,4 @@ class CapitalsController < ApplicationController
 
     capital
   end
-  
-  private
-
-  def confirm_current_user
-    if !@current_user
-      render json: {
-        error: "Bad Request"
-      }, status: 400
-    end
-  end
-
 end
