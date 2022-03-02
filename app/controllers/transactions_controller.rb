@@ -47,7 +47,7 @@ class TransactionsController < ApplicationController
       end
 
       render json: {
-        transactions: transactions
+        share_creation: "Shares created successfully"
       }, status: :created
     else
       render json: {
