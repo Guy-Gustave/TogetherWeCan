@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :sessions, only: [:create]
   resources :registrations, only: [:create]
   resources :capitals, only: [:index, :create]
-  resources :transactions, only: [:create]
+  resources :transactions, only: [:index, :create]
   resources :purchases, only: [:index]
   resources :gifts, only: [:index]
   resources :savings, only: [:index]

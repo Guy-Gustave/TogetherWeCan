@@ -1,14 +1,26 @@
 class TransactionsController < ApplicationController
+
   include CurrentUserConcern
   include ApplicationHelper
   include GiftsHelper
   include TransactionsHelper
 
-  def index
-    @transactions = Transaction.all
+  before_action :confirm_current_user, only: [:index]
 
+  def index
+
+    capitals = @current_user.capitals.includes(:transactions)
+
+    user_transactions = []
+
+    capitals.each do |capital|
+      user_transactions += capital.transactions
+    end
+
+    user_transactions = user_transactions.last(20)
     render json: {
-      transactions: @transactions,
+      capitals_involved: capitals,
+      transactions: user_transactions,
       current_user: @current_user
     }
   end
